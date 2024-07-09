@@ -15,8 +15,14 @@ class VirtualRoom(BaseAPI):
         )
 
     async def get_measures(self):
-        path = "/service/v2/measures"
         measures = await self.get_json(
-            route=path
+            route="/service/v2/measures"
         )
         return measures
+
+    async def get_measures_info(self):
+        measures_info = await self.get_json(
+            route="/service/v2/measures/info"
+        )
+        return measures_info
+
