@@ -28,31 +28,32 @@ class BaseAPI:
             "Accept": "*/*",
         }
 
-    def make_params(
-            self,
-            route: str,
-    ):
+    def prepare_params(self, route: str, params: Optional[dict] = None):
+        if params is None:
+            params = {}
+
         url_parts = list(urlparse.urlparse(self.base_link + route))
         query = dict(urlparse.parse_qsl(url_parts[4]))
-        query.update(self.base_params)
+
+        params.update(self.base_params)
+        query.update(params)
 
         url_parts[4] = urlencode(query)
 
         legacy_url = urlparse.urlunparse(url_parts)
-
         md5_hash = md5(legacy_url.encode())
         sign = md5_hash.hexdigest().upper()
 
-        params = {
+        encrypted_params = {
             "appid": self.app_id,
             "sign": sign
         }
+        params.update(encrypted_params)
+        params.pop("secretkey")
         return params
 
     async def get_json(self, route: str, params: Optional[dict] = None):
-        if params is None:
-            params = {}
-        params.update(self.make_params(route))
+        params = self.prepare_params(route, params)
         logging.info(f"GET JSON {self._link}{route} with {params=}")
         try:
             async with aiohttp.ClientSession(headers=self.headers) as session:

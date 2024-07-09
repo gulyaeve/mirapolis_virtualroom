@@ -16,7 +16,11 @@ class VirtualRoom(BaseAPI):
 
     async def get_measures(self):
         measures = await self.get_json(
-            route="/service/v2/measures"
+            route="/service/v2/measures",
+            params={
+                "limit": "200",
+                # "offset": "20"
+            }
         )
         return measures
 
