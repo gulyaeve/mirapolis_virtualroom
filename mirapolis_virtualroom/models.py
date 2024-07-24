@@ -13,9 +13,9 @@ class Person(BaseModel):
     isuser: bool
     pilogin: str
     pipassword: str
-    caid: int
+    caid: str
     caidname: str
-    rspostid: int
+    rspostid: str
     rspostidname: str
     personemail: str
     pstatus: int

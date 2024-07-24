@@ -1,5 +1,5 @@
 from .base_api import BaseAPI
-from .models import Measure
+from .models import Measure, Person
 
 
 class VirtualRoom(BaseAPI):
@@ -23,7 +23,15 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             }
         )
-        return persons
+        if persons:
+            return [Person(**person) for person in persons]
+
+    async def get_person(self, person_id: int):
+        person = await self.get_json(
+            route=f"/service/v2/persons/{person_id}"
+        )
+        if person:
+            return Person(**person)
 
     async def get_measures(self, limit: int = 200, offset: int = 0):
         measures = await self.get_json(
@@ -35,6 +43,13 @@ class VirtualRoom(BaseAPI):
         )
         if measures:
             return [Measure(**measure) for measure in measures]
+
+    async def get_measure(self, measure_id: int):
+        measure = await self.get_json(
+            route=f"/service/v2/measures/{measure_id}"
+        )
+        if measure:
+            return Measure(**measure)
 
     async def get_measures_info(self):
         measures_info = await self.get_json(
