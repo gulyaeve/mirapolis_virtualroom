@@ -51,9 +51,9 @@ class Measure(BaseModel):
     def __str__(self):
         result = f"{self.mename}\n"
         if self.mestartdate:
-            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y')}"
+            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y')}\n"
         if self.meenddate:
-            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y')}"
+            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y')}\n"
         return result
 
 
