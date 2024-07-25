@@ -15,27 +15,27 @@ class BaseAPI:
     ):
         self._link = base_link
 
-        self.secret_key = secret_key
-        self.app_id = app_id
+        self._secret_key = secret_key
+        self._app_id = app_id
 
-        self.base_link = base_link
-        self.base_params = {
-            "appid": self.app_id,
-            "secretkey": self.secret_key,
+        self._base_link = base_link
+        self._base_params = {
+            "appid": self._app_id,
+            "secretkey": self._secret_key,
         }
 
-        self.headers = {
+        self._headers = {
             "Accept": "*/*",
         }
 
-    def prepare_params(self, route: str, params: Optional[dict] = None):
+    def _prepare_params(self, route: str, params: Optional[dict] = None):
         if params is None:
             params = {}
 
-        url_parts = list(urlparse.urlparse(self.base_link + route))
+        url_parts = list(urlparse.urlparse(self._base_link + route))
         query = dict(urlparse.parse_qsl(url_parts[4]))
 
-        params.update(self.base_params)
+        params.update(self._base_params)
         query.update(params)
 
         url_parts[4] = urlencode(query)
@@ -45,18 +45,18 @@ class BaseAPI:
         sign = md5_hash.hexdigest().upper()
 
         encrypted_params = {
-            "appid": self.app_id,
+            "appid": self._app_id,
             "sign": sign
         }
         params.update(encrypted_params)
         params.pop("secretkey")
         return params
 
-    async def get_json(self, route: str, params: Optional[dict] = None):
-        params = self.prepare_params(route, params)
+    async def _get_json(self, route: str, params: Optional[dict] = None):
+        params = self._prepare_params(route, params)
         logging.info(f"GET JSON {self._link}{route} with {params=}")
         try:
-            async with aiohttp.ClientSession(headers=self.headers) as session:
+            async with aiohttp.ClientSession(headers=self._headers) as session:
                 async with session.get(
                     url=f"{self._link}{route}",
                     params=params,
