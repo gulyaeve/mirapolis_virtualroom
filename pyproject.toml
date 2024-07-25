@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "mirapolis-virtualroom"
-version = "0.0.2"
+version = "0.0.3"
 description = "Python API Client for Mirapolis VirtualRoom. Based on original documentation. Uses Pydantic and aiohttp."
 authors = ["gulyaeve <gulyaeve@icloud.com>"]
 license = "GPL"
-readme = "README.md"
+readme = "README.MD"
 
 [tool.poetry.dependencies]
 python = "^3.12"

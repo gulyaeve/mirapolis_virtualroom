@@ -48,6 +48,14 @@ class Measure(BaseModel):
     ugridname: Optional[str] = None
     mepasses: Optional[int] = None
 
+    def __str__(self):
+        result = f"{self.mename}\n"
+        if self.mestartdate:
+            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y')}"
+        if self.meenddate:
+            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y')}"
+        return result
+
 
 class Measures:
     def __init__(self, measures: Sequence[Measure], count: int):
