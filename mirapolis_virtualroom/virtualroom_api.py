@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .base_api import BaseAPI
-from .models import Measure, Person
+from .models import Measure, Person, Measures, Persons
 
 
 class VirtualRoom(BaseAPI):
@@ -17,7 +17,7 @@ class VirtualRoom(BaseAPI):
             app_id
         )
 
-    async def get_persons(self, limit: int = 200, offset: int = 0) -> Optional[list[Person]]:
+    async def get_persons(self, limit: int = 200, offset: int = 0) -> Optional[Persons]:
         """
         Получение информации о физических лицах
         :rtype: list[Person]
@@ -33,7 +33,10 @@ class VirtualRoom(BaseAPI):
             }
         )
         if persons:
-            return [Person(**person) for person in persons]
+            return Persons(
+                [Person(**person) for person in persons['data']],
+                persons['count']
+            )
         else:
             return None
 
@@ -52,7 +55,7 @@ class VirtualRoom(BaseAPI):
         else:
             return None
 
-    async def get_measures(self, limit: int = 200, offset: int = 0) -> Optional[list[Measure]]:
+    async def get_measures(self, limit: int = 200, offset: int = 0) -> Optional[Measures]:
         """
         Получение информации о мероприятиях
         :rtype: list[Measure]
@@ -68,7 +71,10 @@ class VirtualRoom(BaseAPI):
             }
         )
         if measures:
-            return [Measure(**measure) for measure in measures]
+            return Measures(
+                [Measure(**measure) for measure in measures['data']],
+                measures['count']
+            )
         else:
             return None
 

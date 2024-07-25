@@ -28,7 +28,7 @@ class BaseAPI:
             "Accept": "*/*",
         }
 
-    def _prepare_params(self, route: str, params: Optional[dict] = None):
+    async def _prepare_params(self, route: str, params: Optional[dict] = None):
         if params is None:
             params = {}
 
@@ -53,7 +53,7 @@ class BaseAPI:
         return params
 
     async def _get_json(self, route: str, params: Optional[dict] = None):
-        params = self._prepare_params(route, params)
+        params = await self._prepare_params(route, params)
         logging.info(f"GET JSON {self._link}{route} with {params=}")
         try:
             async with aiohttp.ClientSession(headers=self._headers) as session:
@@ -65,7 +65,12 @@ class BaseAPI:
                     logging.info(f"{resp=}")
                     if resp.ok:
                         logging.info(f"{resp.status=} {self._link}{route} {params=}")
-                        return await resp.json()
+                        answer = await resp.json()
+                        if 'Content-Range' in resp.headers:
+                            count = int(resp.headers['Content-Range'].split("/")[-1])
+                            return {'data': answer, 'count': count}
+                        else:
+                            return answer
                     else:
                         raise aiohttp.ClientError
         except aiohttp.ClientConnectionError:

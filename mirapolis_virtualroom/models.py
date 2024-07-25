@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Sequence
 
 from pydantic import BaseModel
 
@@ -22,6 +22,15 @@ class Person(BaseModel):
     pextcode: str
 
 
+class Persons:
+    def __init__(self, persons: Sequence[Person], count: int):
+        self._persons = persons
+        self.count = count
+
+    def __getitem__(self, key: int) -> Person:
+        return self._persons[key]
+
+
 class Measure(BaseModel):
     meid: int
     mename: str
@@ -38,3 +47,12 @@ class Measure(BaseModel):
     ugrid: Optional[int] = None
     ugridname: Optional[str] = None
     mepasses: Optional[int] = None
+
+
+class Measures:
+    def __init__(self, measures: Sequence[Measure], count: int):
+        self._measures = measures
+        self.count = count
+
+    def __getitem__(self, key: int) -> Measure:
+        return self._measures[key]
