@@ -64,3 +64,40 @@ class Measures:
 
     def __getitem__(self, key: int) -> Measure:
         return self._measures[key]
+
+
+class Member(BaseModel):
+    isaccess: bool
+    meid: int
+    meidname: str
+    mmfinishstatus: int
+    mmid: int
+    personid: int
+    personidname: str
+
+
+class Members:
+    def __init__(self, members: Sequence[Member], count: int):
+        self._members = members
+        self.count = count
+
+    def __getitem__(self, key: int) -> Member:
+        return self._members[key]
+
+
+class Tutor(BaseModel):
+    isaccess: bool
+    meid: int
+    meidname: str
+    mtid: int
+    personid: int
+    personidname: str
+
+
+class Tutors:
+    def __init__(self, tutors: Sequence[Tutor], count: int):
+        self._tutors = tutors
+        self.count = count
+
+    def __getitem__(self, key: int) -> Tutor:
+        return self._tutors[key]
