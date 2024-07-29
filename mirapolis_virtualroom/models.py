@@ -75,6 +75,9 @@ class Member(BaseModel):
     personid: int
     personidname: str
 
+    def __str__(self):
+        return self.personidname
+
 
 class Members:
     def __init__(self, members: Sequence[Member], count: int):
@@ -83,6 +86,9 @@ class Members:
 
     def __getitem__(self, key: int) -> Member:
         return self._members[key]
+
+    def __str__(self):
+        return "\n".join([member.personidname for member in self._members])
 
 
 class Tutor(BaseModel):
@@ -93,6 +99,9 @@ class Tutor(BaseModel):
     personid: int
     personidname: str
 
+    def __str__(self):
+        return self.personidname
+
 
 class Tutors:
     def __init__(self, tutors: Sequence[Tutor], count: int):
@@ -101,3 +110,6 @@ class Tutors:
 
     def __getitem__(self, key: int) -> Tutor:
         return self._tutors[key]
+
+    def __str__(self):
+        return "\n".join([tutor.personidname for tutor in self._tutors])
