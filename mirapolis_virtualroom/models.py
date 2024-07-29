@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 
 
 class Person(BaseModel):
@@ -32,15 +32,15 @@ class Persons:
 
 
 class Measure(BaseModel):
-    meid: int
+    meid: Optional[int] = None
     mename: str
-    medescription: str
-    metype: str
-    mecode: str
-    mestatus: str
+    medescription: Optional[str] = None
+    metype: Literal["0", "1", "2"] = "1"
+    mecode: Optional[str] = None
+    mestatus: Optional[int] = None
     mestartdate: Optional[datetime] = None
     meenddate: Optional[datetime] = None
-    meeduform: Optional[int] = None
+    meeduform: Literal["0", "1", "2"] = "1"
     mecontenttype: Optional[int] = None
     testid: Optional[str] = None
     testidname: Optional[str] = None
@@ -51,10 +51,15 @@ class Measure(BaseModel):
     def __str__(self):
         result = f"{self.mename}\n"
         if self.mestartdate:
-            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y')}\n"
+            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y %H:%M')}\n"
         if self.meenddate:
-            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y')}\n"
+            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y %H:%M')}\n"
         return result
+
+    @field_serializer('mestartdate', 'meenddate')
+    def format_date(self, dt: Optional[datetime]):
+        if dt:
+            return dt.strftime('%Y-%m-%d %H:%M:%S.000')
 
 
 class Measures:

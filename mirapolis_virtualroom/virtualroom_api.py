@@ -1,4 +1,5 @@
-from typing import Optional
+from datetime import datetime
+from typing import Optional, Literal
 
 from .base_api import BaseAPI
 from .models import (
@@ -38,7 +39,7 @@ class VirtualRoom(BaseAPI):
         :param offset: Сдвиг страницы
         :return: List of Persons
         """
-        persons = await self._get_json(
+        persons = await self._get(
             route="/service/v2/persons",
             params={
                 "limit": limit,
@@ -60,7 +61,7 @@ class VirtualRoom(BaseAPI):
         :param person_id: идентификатор физического лица
         :return: Person
         """
-        person = await self._get_json(
+        person = await self._get(
             route=f"/service/v2/persons/{person_id}"
         )
         if person:
@@ -80,7 +81,7 @@ class VirtualRoom(BaseAPI):
         :param offset: Сдвиг страницы
         :return: List of Measures
         """
-        measures = await self._get_json(
+        measures = await self._get(
             route="/service/v2/measures",
             params={
                 "limit": limit,
@@ -102,7 +103,7 @@ class VirtualRoom(BaseAPI):
         :param measure_id: идентификатор мероприятия
         :return: Measure
         """
-        measure = await self._get_json(
+        measure = await self._get(
             route=f"/service/v2/measures/{measure_id}"
         )
         if measure:
@@ -124,7 +125,7 @@ class VirtualRoom(BaseAPI):
         :param offset: Сдвиг страницы
         :return: List of Members
         """
-        members = await self._get_json(
+        members = await self._get(
             route=f"/service/v2/measures/{measure_id}/members",
             params={
                 "limit": limit,
@@ -153,7 +154,7 @@ class VirtualRoom(BaseAPI):
         :param offset: Сдвиг страницы
         :return: List of tutors
         """
-        tutors = await self._get_json(
+        tutors = await self._get(
             route=f"/service/v2/measures/{measure_id}/tutors",
             params={
                 "limit": limit,
@@ -169,7 +170,36 @@ class VirtualRoom(BaseAPI):
             return None
 
     async def get_measures_info(self):
-        measures_info = await self._get_json(
+        measures_info = await self._get(
             route="/service/v2/measures/info"
         )
         return measures_info
+
+    async def create_measure(
+            self,
+            measure: Measure,
+    ) -> Optional[Measure]:
+        """
+        Добавление мероприятия
+        :param measure: объект мероприятия
+        :return: созданное мероприятие
+        """
+        created_measure = await self._post(
+            "/service/v2/measures",
+            data=measure.model_dump_json(indent=4, exclude_none=True),
+        )
+        if created_measure:
+            return Measure(**created_measure)
+
+    async def delete_measure(self, measure_id: int) -> Optional[bool]:
+        """
+        Удаление мероприятия
+        :param measure_id: идентификатор мероприятия
+        """
+        measure = await self._delete(
+            route=f"/service/v2/measures/{measure_id}"
+        )
+        if measure:
+            return True
+        else:
+            return False

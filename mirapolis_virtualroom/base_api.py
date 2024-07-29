@@ -52,25 +52,88 @@ class BaseAPI:
         params.pop("secretkey")
         return params
 
-    async def _get_json(self, route: str, params: Optional[dict] = None):
+    async def _get(self, route: str, params: Optional[dict] = None):
+        """
+        Send get request to host
+        :param params: request params
+        :param route: request link
+        :return: json object from host
+        """
         params = await self._prepare_params(route, params)
-        logging.info(f"GET JSON {self._link}{route} with {params=}")
+        logging.info(f"GET {self._link}{route} with {params=}")
         try:
             async with aiohttp.ClientSession(headers=self._headers) as session:
                 async with session.get(
                     url=f"{self._link}{route}",
                     params=params,
                     verify_ssl=False,
-                ) as resp:
-                    logging.info(f"{resp=}")
-                    if resp.ok:
-                        logging.info(f"{resp.status=} {self._link}{route} {params=}")
-                        answer = await resp.json()
-                        if 'Content-Range' in resp.headers:
-                            count = int(resp.headers['Content-Range'].split("/")[-1])
+                ) as get:
+                    logging.info(f"{get.status=} {self._link}{route} {get=}")
+                    if get.ok:
+                        answer = await get.json()
+                        logging.info(f"{get.status=} {self._link}{route} {params=} {answer=}")
+                        if 'Content-Range' in get.headers:
+                            count = int(get.headers['Content-Range'].split("/")[-1])
                             return {'data': answer, 'count': count}
                         else:
                             return answer
+                    else:
+                        raise aiohttp.ClientError
+        except aiohttp.ClientConnectionError:
+            logging.warning(f"Api is unreachable {self._link}{route}")
+        except Exception as e:
+            logging.warning(f"Api is unreachable: {e}")
+
+    async def _post(
+            self,
+            route: str,
+            params: Optional[dict] = None,
+            data: Optional[str] = None,
+    ) -> dict:
+        """
+        Send post request to host
+        :param params: request params
+        :param data: request data
+        :param route: request link
+        :return: json object from host
+        """
+        params = await self._prepare_params(route, params)
+        logging.info(f"POST {self._link}{route} with {params=} {data=}")
+        headers = {"Content-Type": "application/json"}
+        try:
+            async with aiohttp.ClientSession(headers=headers) as session:
+                async with session.post(
+                    f'{self._link}{route}',
+                    params=params,
+                    data=data,
+                    verify_ssl=False,
+                ) as post:
+                    logging.info(f"{post.status=} {self._link}{route} {post=}")
+                    if post.ok:
+                        answer = await post.json()
+                        logging.info(f"{post.status=} {self._link}{route} {params=} {data=} {answer=}")
+                        return answer
+                    else:
+                        raise aiohttp.ClientError
+        except aiohttp.ClientConnectionError:
+            logging.warning(f"Api is unreachable {self._link}{route}")
+        except Exception as e:
+            logging.warning(f"Api is unreachable: {e}")
+
+    async def _delete(self, route: str, params: Optional[dict] = None) -> int:
+        params = await self._prepare_params(route, params)
+        logging.info(f"DELETE {self._link}{route} with {params=}")
+        try:
+            async with aiohttp.ClientSession(headers=self._headers) as session:
+                async with session.delete(
+                    url=f"{self._link}{route}",
+                    params=params,
+                    verify_ssl=False,
+                ) as delete:
+                    logging.info(f"{delete=}")
+                    if delete.ok:
+                        logging.info(f"{delete.status=} {self._link}{route} {params=}")
+                        return delete.status
                     else:
                         raise aiohttp.ClientError
         except aiohttp.ClientConnectionError:
@@ -94,36 +157,6 @@ class BaseAPI:
     #                 if resp.ok:
     #                     logging.info(f"{resp.status=} {self._link}{route}")
     #                     return await resp.read()
-    #                 else:
-    #                     raise aiohttp.ClientError
-    #     except aiohttp.ClientConnectionError:
-    #         logging.warning(f"Api is unreachable {self._link}{route}")
-    #     except Exception as e:
-    #         logging.warning(f"Api is unreachable: {e}")
-
-    # async def post_json(self, route: str, data: Optional[dict] = None) -> dict:
-    #     """
-    #     Send post request to host
-    #     :param route: request link
-    #     :param data: json object to send
-    #     :return: json object from host
-    #     """
-    #     headers = self.headers
-    #     headers.update({"Content-Type": "application/x-www-form-urlencoded"})
-    #     if data is None:
-    #         data = {}
-    #     logging.info(f"Sending post request to {self._link}{route} with data: {data}")
-    #     try:
-    #         async with aiohttp.ClientSession(headers=headers) as session:
-    #             async with session.post(
-    #                 f'{self._link}{route}',
-    #                 data=data,
-    #                 verify_ssl=False,
-    #             ) as post:
-    #                 logging.info(f"{post=}")
-    #                 if post.ok:
-    #                     logging.info(f"{post.status=} {self._link}{route} {data=}")
-    #                     return await post.json()
     #                 else:
     #                     raise aiohttp.ClientError
     #     except aiohttp.ClientConnectionError:
@@ -161,26 +194,6 @@ class BaseAPI:
     #     except Exception as e:
     #         logging.warning(f"Api is unreachable: {e}")
     #
-    # async def delete(self, route: str, data: Optional[dict] = None) -> int:
-    #     if data is None:
-    #         data = {}
-    #     logging.info(f"Sending DELETE request to {self._link}{route} with data={data}")
-    #     try:
-    #         async with aiohttp.ClientSession(headers=self.headers) as session:
-    #             async with session.delete(
-    #                 url=f"{self._link}{route}",
-    #                 data=data,
-    #                 verify_ssl=False,
-    #             ) as resp:
-    #                 logging.info(f"{resp=}")
-    #                 if resp.ok:
-    #                     logging.info(f"{resp.status=} {self._link}{route} {data=}")
-    #                     return resp.status
-    #                 else:
-    #                     raise aiohttp.ClientError
-    #     except aiohttp.ClientConnectionError:
-    #         logging.warning(f"Api is unreachable {self._link}{route}")
-    #     except Exception as e:
-    #         logging.warning(f"Api is unreachable: {e}")
+
 
 
