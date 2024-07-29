@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Optional, Literal
 
@@ -190,6 +191,24 @@ class VirtualRoom(BaseAPI):
         )
         if created_measure:
             return Measure(**created_measure)
+
+    async def add_tutor_to_measure_by_email(
+            self,
+            measure_id: int,
+            tutor_email: str,
+    ):
+        """
+        Добавление преподавателя мероприятия по E-mail
+        :param measure_id: идентификатор мероприятия
+        :param tutor_email: e-mail преподавателя
+        :return: id физического лица
+        """
+        # data = {"enableSearchByEmail": True}
+        tutor = await self._post(
+            route=f"/service/v2/measures/{measure_id}/tutors/regbyemail/{tutor_email.lower()}",
+            # data=json.dumps(data, indent=4)
+        )
+        return tutor
 
     async def delete_measure(self, measure_id: int) -> Optional[bool]:
         """

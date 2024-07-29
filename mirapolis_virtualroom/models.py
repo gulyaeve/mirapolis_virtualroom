@@ -24,7 +24,7 @@ class Person(BaseModel):
 
 class Persons:
     def __init__(self, persons: Sequence[Person], count: int):
-        self._persons = persons
+        self._persons = sorted(persons, key=lambda x: x.personid)
         self.count = count
 
     def __getitem__(self, key: int) -> Person:
@@ -64,7 +64,7 @@ class Measure(BaseModel):
 
 class Measures:
     def __init__(self, measures: Sequence[Measure], count: int):
-        self._measures = measures
+        self._measures = sorted(measures, key=lambda x: x.meid)
         self.count = count
 
     def __getitem__(self, key: int) -> Measure:

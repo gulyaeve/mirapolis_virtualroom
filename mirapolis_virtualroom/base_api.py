@@ -89,7 +89,7 @@ class BaseAPI:
             route: str,
             params: Optional[dict] = None,
             data: Optional[str] = None,
-    ) -> dict:
+    ) -> dict | str:
         """
         Send post request to host
         :param params: request params
@@ -110,6 +110,10 @@ class BaseAPI:
                 ) as post:
                     logging.info(f"{post.status=} {self._link}{route} {post=}")
                     if post.ok:
+                        if post.content_type == "text/plain":
+                            answer = await post.text()
+                            logging.info(f"{post.status=} {self._link}{route} {params=} {data=} {answer=}")
+                            return answer
                         answer = await post.json()
                         logging.info(f"{post.status=} {self._link}{route} {params=} {data=} {answer=}")
                         return answer
