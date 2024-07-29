@@ -1,7 +1,16 @@
 from typing import Optional
 
 from .base_api import BaseAPI
-from .models import Measure, Person, Measures, Persons, Members, Member, Tutors, Tutor
+from .models import (
+    Measure,
+    Person,
+    Measures,
+    Persons,
+    Members,
+    Member,
+    Tutors,
+    Tutor
+)
 
 
 class VirtualRoom(BaseAPI):
@@ -17,7 +26,11 @@ class VirtualRoom(BaseAPI):
             app_id
         )
 
-    async def get_persons(self, limit: int = 200, offset: int = 0) -> Optional[Persons]:
+    async def get_persons(
+            self,
+            limit: int = 200,
+            offset: int = 0
+    ) -> Optional[Persons]:
         """
         Получение информации о физических лицах
         :rtype: list[Person]
@@ -55,7 +68,11 @@ class VirtualRoom(BaseAPI):
         else:
             return None
 
-    async def get_measures(self, limit: int = 200, offset: int = 0) -> Optional[Measures]:
+    async def get_measures(
+            self,
+            limit: int = 200,
+            offset: int = 0
+    ) -> Optional[Measures]:
         """
         Получение информации о мероприятиях
         :rtype: list[Measure]
@@ -93,7 +110,20 @@ class VirtualRoom(BaseAPI):
         else:
             return None
 
-    async def get_members(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[Members]:
+    async def get_members(
+            self,
+            measure_id: int,
+            limit: int = 200,
+            offset: int = 0
+    ) -> Optional[Members]:
+        """
+        Получение информации об участниках мероприятия
+        :rtype: Members
+        :param measure_id: идентификатор мероприятия
+        :param limit: Количество записей (200 максимально)
+        :param offset: Сдвиг страницы
+        :return: List of Members
+        """
         members = await self._get_json(
             route=f"/service/v2/measures/{measure_id}/members",
             params={
@@ -109,7 +139,20 @@ class VirtualRoom(BaseAPI):
         else:
             return None
 
-    async def get_tutors(self, measure_id: int, limit: int = 200, offset: int = 0):
+    async def get_tutors(
+            self,
+            measure_id: int,
+            limit: int = 200,
+            offset: int = 0
+    ) -> Optional[Tutors]:
+        """
+        Получение информации о преподавателях мероприятия
+        :rtype: Tutors
+        :param measure_id: идентификатор мероприятия
+        :param limit: Количество записей (200 максимально)
+        :param offset: Сдвиг страницы
+        :return: List of tutors
+        """
         tutors = await self._get_json(
             route=f"/service/v2/measures/{measure_id}/tutors",
             params={
