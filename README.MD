@@ -10,5 +10,42 @@
 ### Установка
 
 ```console
-$ pip install mirapolis_virtualroom
+$ pip install mirapolis-virtualroom
+```
+
+### Использование
+```Python
+from mirapolis_virtualroom.virtualroom_api import VirtualRoom
+import asyncio
+import logging
+
+
+# Инициализация клиента
+mirapolis_api = VirtualRoom(
+    app_id="test",
+    secret_key="secret_key",
+    base_link="https://v1234.vr.mirapolis.ru/mira"
+)
+
+
+async def main():
+    # Получение списка мероприятий
+    measures = await mirapolis_api.get_measures(
+        limit=10, # Количество на одной странице
+        offset=40, # Сдвиг страницы
+    )
+    for measure in measures:
+        # Полный вывод
+        print(repr(measure))
+        # Краткий вывод (строка)
+        print(measure)
+        # Получение названия
+        print(measure.mename)
+    # Получение общего количества мероприятий
+    print(f"{measures.count=}")
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level="INFO")
+    asyncio.run(main())
 ```

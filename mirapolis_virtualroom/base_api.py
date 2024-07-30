@@ -71,9 +71,11 @@ class BaseAPI:
                     logging.info(f"{get.status=} {self._link}{route} {get=}")
                     if get.ok:
                         answer = await get.json()
-                        logging.info(f"{get.status=} {self._link}{route} {params=} {answer=}")
+                        logging.info(f"{get.status=} {self._link}{
+                                     route} {params=} {answer=}")
                         if 'Content-Range' in get.headers:
-                            count = int(get.headers['Content-Range'].split("/")[-1])
+                            count = int(
+                                get.headers['Content-Range'].split("/")[-1])
                             return {'data': answer, 'count': count}
                         else:
                             return answer
@@ -112,10 +114,12 @@ class BaseAPI:
                     if post.ok:
                         if post.content_type == "text/plain":
                             answer = await post.text()
-                            logging.info(f"{post.status=} {self._link}{route} {params=} {data=} {answer=}")
+                            logging.info(f"{post.status=} {self._link}{
+                                         route} {params=} {data=} {answer=}")
                             return answer
                         answer = await post.json()
-                        logging.info(f"{post.status=} {self._link}{route} {params=} {data=} {answer=}")
+                        logging.info(f"{post.status=} {self._link}{
+                                     route} {params=} {data=} {answer=}")
                         return answer
                     else:
                         raise aiohttp.ClientError
@@ -136,7 +140,8 @@ class BaseAPI:
                 ) as delete:
                     logging.info(f"{delete=}")
                     if delete.ok:
-                        logging.info(f"{delete.status=} {self._link}{route} {params=}")
+                        logging.info(f"{delete.status=} {
+                                     self._link}{route} {params=}")
                         return delete.status
                     else:
                         raise aiohttp.ClientError
@@ -198,6 +203,3 @@ class BaseAPI:
     #     except Exception as e:
     #         logging.warning(f"Api is unreachable: {e}")
     #
-
-
-

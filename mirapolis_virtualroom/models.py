@@ -51,9 +51,11 @@ class Measure(BaseModel):
     def __str__(self):
         result = f"{self.mename}\n"
         if self.mestartdate:
-            result += f"Начало: {self.mestartdate.strftime('%d.%m.%Y %H:%M')}\n"
+            result += f"Начало: {
+                self.mestartdate.strftime('%d.%m.%Y %H:%M')}\n"
         if self.meenddate:
-            result += f"Окончание: {self.meenddate.strftime('%d.%m.%Y %H:%M')}\n"
+            result += f"Окончание: {
+                self.meenddate.strftime('%d.%m.%Y %H:%M')}\n"
         return result
 
     @field_serializer('mestartdate', 'meenddate')
@@ -64,7 +66,7 @@ class Measure(BaseModel):
 
 class Measures:
     def __init__(self, measures: Sequence[Measure], count: int):
-        self._measures = sorted(measures, key=lambda x: x.meid)
+        self._measures = sorted(measures, key=lambda x: x.meid, reverse=True)
         self.count = count
 
     def __getitem__(self, key: int) -> Measure:

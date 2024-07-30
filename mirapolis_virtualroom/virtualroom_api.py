@@ -1,6 +1,4 @@
-import json
-from datetime import datetime
-from typing import Optional, Literal
+from typing import Optional
 
 from .base_api import BaseAPI
 from .models import (
@@ -205,7 +203,8 @@ class VirtualRoom(BaseAPI):
         """
         # data = {"enableSearchByEmail": True}
         tutor = await self._post(
-            route=f"/service/v2/measures/{measure_id}/tutors/regbyemail/{tutor_email.lower()}",
+            route=f"/service/v2/measures/{
+                measure_id}/tutors/regbyemail/{tutor_email.lower()}",
             # data=json.dumps(data, indent=4)
         )
         return tutor
