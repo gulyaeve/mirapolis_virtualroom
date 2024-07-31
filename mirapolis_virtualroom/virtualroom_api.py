@@ -36,7 +36,7 @@ class VirtualRoom(BaseAPI):
         :rtype: list[Person]
         :param limit: Количество записей (200 максимально)
         :param offset: Сдвиг страницы
-        :return: List of Persons
+        :return: Sequence of Persons and count
         """
         persons = await self._get(
             route="/service/v2/persons",
@@ -75,10 +75,9 @@ class VirtualRoom(BaseAPI):
     ) -> Optional[Measures]:
         """
         Получение информации о мероприятиях
-        :rtype: list[Measure]
         :param limit: Количество записей (200 максимально)
         :param offset: Сдвиг страницы
-        :return: List of Measures
+        :return: Sequence of Measures and count
         """
         measures = await self._get(
             route="/service/v2/measures",
@@ -118,11 +117,10 @@ class VirtualRoom(BaseAPI):
     ) -> Optional[Members]:
         """
         Получение информации об участниках мероприятия
-        :rtype: Members
         :param measure_id: идентификатор мероприятия
         :param limit: Количество записей (200 максимально)
         :param offset: Сдвиг страницы
-        :return: List of Members
+        :return: Sequence of Members and count
         """
         members = await self._get(
             route=f"/service/v2/measures/{measure_id}/members",
@@ -147,11 +145,10 @@ class VirtualRoom(BaseAPI):
     ) -> Optional[Tutors]:
         """
         Получение информации о преподавателях мероприятия
-        :rtype: Tutors
         :param measure_id: идентификатор мероприятия
         :param limit: Количество записей (200 максимально)
         :param offset: Сдвиг страницы
-        :return: List of tutors
+        :return: Sequence of tutors and count
         """
         tutors = await self._get(
             route=f"/service/v2/measures/{measure_id}/tutors",
@@ -204,7 +201,7 @@ class VirtualRoom(BaseAPI):
         # data = {"enableSearchByEmail": True}
         tutor = await self._post(
             route=f"/service/v2/measures/{
-                measure_id}/tutors/regbyemail/{tutor_email.lower()}",
+                measure_id}/tutors/regbyemail/{tutor_email}",
             # data=json.dumps(data, indent=4)
         )
         return tutor
@@ -213,6 +210,7 @@ class VirtualRoom(BaseAPI):
         """
         Удаление мероприятия
         :param measure_id: идентификатор мероприятия
+        :return: True if success
         """
         measure = await self._delete(
             route=f"/service/v2/measures/{measure_id}"

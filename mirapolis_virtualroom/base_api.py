@@ -91,7 +91,7 @@ class BaseAPI:
             route: str,
             params: Optional[dict] = None,
             data: Optional[str] = None,
-    ) -> dict | str:
+    ) -> Optional[dict | str]:
         """
         Send post request to host
         :param params: request params
@@ -128,7 +128,11 @@ class BaseAPI:
         except Exception as e:
             logging.warning(f"Api is unreachable: {e}")
 
-    async def _delete(self, route: str, params: Optional[dict] = None) -> int:
+    async def _delete(
+            self,
+            route: str,
+            params: Optional[dict] = None
+    ) -> Optional[int]:
         params = await self._prepare_params(route, params)
         logging.info(f"DELETE {self._link}{route} with {params=}")
         try:

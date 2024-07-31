@@ -21,6 +21,9 @@ class Person(BaseModel):
     pstatus: int
     pextcode: str
 
+    def __str__(self) -> str:
+        return f"{self.plastname} {self.pfirstname} {self.psurname}"
+
 
 class Persons:
     def __init__(self, persons: Sequence[Person], count: int):
@@ -29,6 +32,9 @@ class Persons:
 
     def __getitem__(self, key: int) -> Person:
         return self._persons[key]
+
+    def __str__(self) -> str:
+        return "\n".join([str(person) for person in self._persons])
 
 
 class Measure(BaseModel):
@@ -71,6 +77,9 @@ class Measures:
 
     def __getitem__(self, key: int) -> Measure:
         return self._measures[key]
+
+    def __str__(self):
+        return "\n".join([str(measure) for measure in self._measures])
 
 
 class Member(BaseModel):
