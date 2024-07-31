@@ -206,6 +206,24 @@ class VirtualRoom(BaseAPI):
         )
         return tutor
 
+    async def add_tutor_to_measure_by_id(
+        self,
+        measure_id: int,
+        person_id: int,
+    ) -> Optional[Tutor]:
+        """
+        Добавление преподавателя мероприятия по id
+        :param measure_id: идентификатор мероприятия
+        :param person_id: id физического лицапреподавателя
+        :return: Tutor
+        """
+        tutor = await self._post(
+            route=f"/service/v2/measures/{
+                measure_id}/tutors/{person_id}",
+        )
+        if tutor:
+            return Tutor(**tutor)
+
     async def delete_measure(self, measure_id: int) -> Optional[bool]:
         """
         Удаление мероприятия

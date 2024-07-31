@@ -80,7 +80,7 @@ class BaseAPI:
                         else:
                             return answer
                     else:
-                        raise aiohttp.ClientError
+                        raise aiohttp.ClientError(get.json())
         except aiohttp.ClientConnectionError:
             logging.warning(f"Api is unreachable {self._link}{route}")
         except Exception as e:
@@ -122,7 +122,7 @@ class BaseAPI:
                                      route} {params=} {data=} {answer=}")
                         return answer
                     else:
-                        raise aiohttp.ClientError
+                        raise aiohttp.ClientError(post.json())
         except aiohttp.ClientConnectionError:
             logging.warning(f"Api is unreachable {self._link}{route}")
         except Exception as e:
@@ -148,7 +148,7 @@ class BaseAPI:
                                      self._link}{route} {params=}")
                         return delete.status
                     else:
-                        raise aiohttp.ClientError
+                        raise aiohttp.ClientError(delete.json())
         except aiohttp.ClientConnectionError:
             logging.warning(f"Api is unreachable {self._link}{route}")
         except Exception as e:
