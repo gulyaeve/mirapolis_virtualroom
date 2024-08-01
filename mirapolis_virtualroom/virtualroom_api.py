@@ -181,8 +181,8 @@ class VirtualRoom(BaseAPI):
         :return: созданное мероприятие
         """
         created_measure = await self._post(
-            "/service/v2/measures",
-            data=measure.model_dump_json(indent=4, exclude_none=True),
+            route="/service/v2/measures",
+            data=measure.model_dump(exclude_none=True),
         )
         if created_measure:
             return Measure(**created_measure)
@@ -191,6 +191,9 @@ class VirtualRoom(BaseAPI):
             self,
             measure_id: int,
             tutor_email: str,
+            send_notifications: bool = True,
+            add_roles_by_default: bool = True,
+            enable_search_by_email: bool = True,
     ):
         """
         Добавление преподавателя мероприятия по E-mail
@@ -198,11 +201,15 @@ class VirtualRoom(BaseAPI):
         :param tutor_email: e-mail преподавателя
         :return: id физического лица
         """
-        # data = {"enableSearchByEmail": True}
+        data = {
+            "sendNotifications": send_notifications,
+            "addRolesByDefault": add_roles_by_default,
+            "enableSearchByEmail": enable_search_by_email,
+        }
         tutor = await self._post(
             route=f"/service/v2/measures/{
                 measure_id}/tutors/regbyemail/{tutor_email}",
-            # data=json.dumps(data, indent=4)
+            data=data
         )
         return tutor
 

@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Optional
 import aiohttp
@@ -81,10 +82,9 @@ class BaseAPI:
                             return answer
                     else:
                         error = await get.json()
-                        logging.warning(error)
-                        raise aiohttp.ClientError(error)
-        except aiohttp.ClientConnectionError:
-            logging.warning(f"Api is unreachable {self._link}{route}")
+                        raise aiohttp.ClientConnectionError(error)
+        except aiohttp.ClientConnectionError as e:
+            logging.warning(f"Api is unreachable {self._link}{route} {e}")
         except Exception as e:
             logging.warning(f"Api is unreachable: {e}")
 
@@ -92,7 +92,7 @@ class BaseAPI:
             self,
             route: str,
             params: Optional[dict] = None,
-            data: Optional[str] = None,
+            data: Optional[dict] = None,
     ) -> Optional[dict | str]:
         """
         Send post request to host
@@ -109,7 +109,7 @@ class BaseAPI:
                 async with session.post(
                     f'{self._link}{route}',
                     params=params,
-                    data=data,
+                    data=json.dumps(data, indent=4),
                     verify_ssl=False,
                 ) as post:
                     logging.info(f"{post.status=} {self._link}{route} {post=}")
@@ -125,10 +125,9 @@ class BaseAPI:
                         return answer
                     else:
                         error = await post.json()
-                        logging.warning(error)
-                        raise aiohttp.ClientError(error)
-        except aiohttp.ClientConnectionError:
-            logging.warning(f"Api is unreachable {self._link}{route}")
+                        raise aiohttp.ClientConnectionError(error)
+        except aiohttp.ClientConnectionError as e:
+            logging.warning(f"Api is unreachable: {self._link}{route} {e}")
         except Exception as e:
             logging.warning(f"Api is unreachable: {e}")
 
@@ -153,10 +152,9 @@ class BaseAPI:
                         return delete.status
                     else:
                         error = await delete.json()
-                        logging.warning(error)
-                        raise aiohttp.ClientError(error)
-        except aiohttp.ClientConnectionError:
-            logging.warning(f"Api is unreachable {self._link}{route}")
+                        raise aiohttp.ClientConnectionError(error)
+        except aiohttp.ClientConnectionError as e:
+            logging.warning(f"Api is unreachable {self._link}{route} {e}")
         except Exception as e:
             logging.warning(f"Api is unreachable: {e}")
 
