@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mirapolis-virtualroom"
-version = "0.1.7"
+version = "0.1.8"
 description = "Python API Client for Mirapolis VirtualRoom. Based on original documentation. Uses Pydantic and aiohttp."
 authors = ["gulyaeve <gulyaev.e@icloud.com>"]
 license = "MIT"
@@ -18,7 +18,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "mirapolis-virtualroom"
-version = "0.1.7"
+version = "0.1.8"
 authors = [
   { name="Eugene Gulyaev", email="gulyaev.e@icloud.com" },
 ]
