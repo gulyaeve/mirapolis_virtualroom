@@ -70,6 +70,11 @@ class BaseAPI:
                     verify_ssl=False,
                 ) as get:
                     if get.ok:
+                        if get.content_type == "text/plain":
+                            answer = await get.text()
+                            logging.info(f"GET {get.status} {
+                                self._link}{route} {answer=}")
+                            return answer
                         answer = await get.json()
                         logging.info(f"GET {get.status} {
                             self._link}{route} {answer=}")

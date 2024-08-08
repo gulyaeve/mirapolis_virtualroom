@@ -244,3 +244,20 @@ class VirtualRoom(BaseAPI):
             return True
         else:
             return False
+
+    async def get_measure_guest_link(
+        self,
+        measure_id: int,
+    ) -> Optional[str]:
+        """
+        Получение ссылки гостевого входа на вебинар
+        :param measure_id: идентификатор мероприятия
+        :return: Ссылка для регистрации на вебинар
+        """
+        guest_link = await self._get(
+            route=f"/service/v2/measures/{measure_id}/webinarAnonymousLink"
+        )
+        if guest_link:
+            return guest_link
+        else:
+            return None
