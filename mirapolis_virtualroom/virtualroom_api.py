@@ -157,10 +157,15 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             }
         )
-        if tutors:
+        if isinstance(tutors, dict):
             return Tutors(
                 [Tutor(**tutor) for tutor in tutors['data']],
                 tutors['count']
+            )
+        if isinstance(tutors, list):
+            return Tutors(
+                [Tutor(**tutor) for tutor in tutors],
+                len(tutors)
             )
         else:
             return None

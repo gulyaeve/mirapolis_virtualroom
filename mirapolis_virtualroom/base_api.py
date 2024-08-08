@@ -73,11 +73,11 @@ class BaseAPI:
                         if get.content_type == "text/plain":
                             answer = await get.text()
                             logging.info(f"GET {get.status} {
-                                self._link}{route} {answer=}")
+                                self._link}{route} {get.content_type} {answer=}")
                             return answer
                         answer = await get.json()
                         logging.info(f"GET {get.status} {
-                            self._link}{route} {answer=}")
+                            self._link}{route} {get.content_type} {answer=}")
                         if 'Content-Range' in get.headers:
                             count = int(
                                 get.headers['Content-Range'].split("/")[-1])
@@ -122,11 +122,11 @@ class BaseAPI:
                         if post.content_type == "text/plain":
                             answer = await post.text()
                             logging.info(f"POST {post.status} {
-                                self._link}{route} {answer=}")
+                                self._link}{route} {post.content_type} {answer=}")
                             return answer
                         answer = await post.json()
                         logging.info(f"POST {post.status} {
-                            self._link}{route} {answer=}")
+                            self._link}{route} {post.content_type} {answer=}")
                         return answer
                     else:
                         logging.warning(f"POST {post.status} {
