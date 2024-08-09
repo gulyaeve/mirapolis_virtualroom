@@ -18,12 +18,15 @@ class VirtualRoom(BaseAPI):
             self,
             base_link: str,
             secret_key: str,
-            app_id: str
+            app_id: str,
+            service_path: str = "/service/v2",
+            verify_ssl: bool = True,
     ):
         super().__init__(
-            base_link,
-            secret_key,
-            app_id
+            api_link=base_link + service_path,
+            secret_key=secret_key,
+            app_id=app_id,
+            verify_ssl=verify_ssl,
         )
 
     async def get_persons(
@@ -39,7 +42,7 @@ class VirtualRoom(BaseAPI):
         :return: Sequence of Persons and count
         """
         persons = await self._get(
-            route="/service/v2/persons",
+            route="/persons",
             params={
                 "limit": limit,
                 "offset": offset,
@@ -61,7 +64,7 @@ class VirtualRoom(BaseAPI):
         :return: Person
         """
         person = await self._get(
-            route=f"/service/v2/persons/{person_id}"
+            route=f"/persons/{person_id}"
         )
         if person:
             return Person(**person)
@@ -80,7 +83,7 @@ class VirtualRoom(BaseAPI):
         :return: Sequence of Measures and count
         """
         measures = await self._get(
-            route="/service/v2/measures",
+            route="/measures",
             params={
                 "limit": limit,
                 "offset": offset,
@@ -102,7 +105,7 @@ class VirtualRoom(BaseAPI):
         :return: Measure
         """
         measure = await self._get(
-            route=f"/service/v2/measures/{measure_id}"
+            route=f"/measures/{measure_id}"
         )
         if measure:
             return Measure(**measure)
@@ -123,7 +126,7 @@ class VirtualRoom(BaseAPI):
         :return: Sequence of Members and count
         """
         members = await self._get(
-            route=f"/service/v2/measures/{measure_id}/members",
+            route=f"/measures/{measure_id}/members",
             params={
                 "limit": limit,
                 "offset": offset,
@@ -151,7 +154,7 @@ class VirtualRoom(BaseAPI):
         :return: Sequence of tutors and count
         """
         tutors = await self._get(
-            route=f"/service/v2/measures/{measure_id}/tutors",
+            route=f"/measures/{measure_id}/tutors",
             params={
                 "limit": limit,
                 "offset": offset,
@@ -172,7 +175,7 @@ class VirtualRoom(BaseAPI):
 
     async def get_measures_info(self):
         measures_info = await self._get(
-            route="/service/v2/measures/info"
+            route="/measures/info"
         )
         return measures_info
 
@@ -186,7 +189,7 @@ class VirtualRoom(BaseAPI):
         :return: созданное мероприятие
         """
         created_measure = await self._post(
-            route="/service/v2/measures",
+            route="/measures",
             data=measure.model_dump(exclude_none=True),
         )
         if created_measure:
@@ -212,8 +215,7 @@ class VirtualRoom(BaseAPI):
             "enableSearchByEmail": enable_search_by_email,
         }
         tutor = await self._post(
-            route=f"/service/v2/measures/{
-                measure_id}/tutors/regbyemail/{tutor_email}",
+            route=f"/measures/{measure_id}/tutors/regbyemail/{tutor_email}",
             data=data
         )
         return tutor
@@ -230,8 +232,7 @@ class VirtualRoom(BaseAPI):
         :return: Tutor
         """
         tutor = await self._post(
-            route=f"/service/v2/measures/{
-                measure_id}/tutors/{person_id}",
+            route=f"/measures/{measure_id}/tutors/{person_id}",
         )
         if tutor:
             return Tutor(**tutor)
@@ -243,7 +244,7 @@ class VirtualRoom(BaseAPI):
         :return: True if success
         """
         measure = await self._delete(
-            route=f"/service/v2/measures/{measure_id}"
+            route=f"/measures/{measure_id}"
         )
         if measure:
             return True
@@ -260,7 +261,7 @@ class VirtualRoom(BaseAPI):
         :return: Ссылка для регистрации на вебинар
         """
         guest_link = await self._get(
-            route=f"/service/v2/measures/{measure_id}/webinarAnonymousLink"
+            route=f"/measures/{measure_id}/webinarAnonymousLink"
         )
         if guest_link:
             return guest_link
