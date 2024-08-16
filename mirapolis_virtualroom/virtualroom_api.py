@@ -1,26 +1,17 @@
 from typing import Optional
 
 from .base_api import BaseAPI
-from .models import (
-    Measure,
-    Person,
-    Measures,
-    Persons,
-    Members,
-    Member,
-    Tutors,
-    Tutor
-)
+from .models import Measure, MeasureResult, MeasureResults, Measures, Member, Members, Person, Persons, Tutor, Tutors
 
 
 class VirtualRoom(BaseAPI):
     def __init__(
-            self,
-            base_link: str,
-            secret_key: str,
-            app_id: str,
-            service_path: str = "/service/v2",
-            verify_ssl: bool = True,
+        self,
+        base_link: str,
+        secret_key: str,
+        app_id: str,
+        service_path: str = "/service/v2",
+        verify_ssl: bool = True,
     ):
         super().__init__(
             api_link=base_link + service_path,
@@ -29,11 +20,7 @@ class VirtualRoom(BaseAPI):
             verify_ssl=verify_ssl,
         )
 
-    async def get_persons(
-            self,
-            limit: int = 200,
-            offset: int = 0
-    ) -> Optional[Persons]:
+    async def get_persons(self, limit: int = 200, offset: int = 0) -> Optional[Persons]:
         """
         Получение информации о физических лицах
         :rtype: list[Person]
@@ -46,13 +33,10 @@ class VirtualRoom(BaseAPI):
             params={
                 "limit": limit,
                 "offset": offset,
-            }
+            },
         )
         if persons:
-            return Persons(
-                [Person(**person) for person in persons['data']],
-                persons['count']
-            )
+            return Persons([Person(**person) for person in persons["data"]], persons["count"])
         else:
             return None
 
@@ -63,19 +47,13 @@ class VirtualRoom(BaseAPI):
         :param person_id: идентификатор физического лица
         :return: Person
         """
-        person = await self._get(
-            route=f"/persons/{person_id}"
-        )
+        person = await self._get(route=f"/persons/{person_id}")
         if person:
             return Person(**person)
         else:
             return None
 
-    async def get_measures(
-            self,
-            limit: int = 200,
-            offset: int = 0
-    ) -> Optional[Measures]:
+    async def get_measures(self, limit: int = 200, offset: int = 0) -> Optional[Measures]:
         """
         Получение информации о мероприятиях
         :param limit: Количество записей (200 максимально)
@@ -87,13 +65,10 @@ class VirtualRoom(BaseAPI):
             params={
                 "limit": limit,
                 "offset": offset,
-            }
+            },
         )
         if measures:
-            return Measures(
-                [Measure(**measure) for measure in measures['data']],
-                measures['count']
-            )
+            return Measures([Measure(**measure) for measure in measures["data"]], measures["count"])
         else:
             return None
 
@@ -104,20 +79,13 @@ class VirtualRoom(BaseAPI):
         :param measure_id: идентификатор мероприятия
         :return: Measure
         """
-        measure = await self._get(
-            route=f"/measures/{measure_id}"
-        )
+        measure = await self._get(route=f"/measures/{measure_id}")
         if measure:
             return Measure(**measure)
         else:
             return None
 
-    async def get_members(
-            self,
-            measure_id: int,
-            limit: int = 200,
-            offset: int = 0
-    ) -> Optional[Members]:
+    async def get_members(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[Members]:
         """
         Получение информации об участниках мероприятия
         :param measure_id: идентификатор мероприятия
@@ -130,22 +98,14 @@ class VirtualRoom(BaseAPI):
             params={
                 "limit": limit,
                 "offset": offset,
-            }
+            },
         )
         if members:
-            return Members(
-                [Member(**member) for member in members['data']],
-                members['count']
-            )
+            return Members([Member(**member) for member in members["data"]], members["count"])
         else:
             return None
 
-    async def get_tutors(
-            self,
-            measure_id: int,
-            limit: int = 200,
-            offset: int = 0
-    ) -> Optional[Tutors]:
+    async def get_tutors(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[Tutors]:
         """
         Получение информации о преподавателях мероприятия
         :param measure_id: идентификатор мероприятия
@@ -158,30 +118,36 @@ class VirtualRoom(BaseAPI):
             params={
                 "limit": limit,
                 "offset": offset,
-            }
+            },
         )
         if isinstance(tutors, dict):
-            return Tutors(
-                [Tutor(**tutor) for tutor in tutors['data']],
-                tutors['count']
-            )
+            return Tutors([Tutor(**tutor) for tutor in tutors["data"]], tutors["count"])
         if isinstance(tutors, list):
-            return Tutors(
-                [Tutor(**tutor) for tutor in tutors],
-                len(tutors)
-            )
+            return Tutors([Tutor(**tutor) for tutor in tutors], len(tutors))
         else:
             return None
 
     async def get_measures_info(self):
-        measures_info = await self._get(
-            route="/measures/info"
-        )
+        measures_info = await self._get(route="/measures/info")
         return measures_info
 
+    async def get_measure_results(self, measure_id: int, limit: int = 200, offset: int = 0):
+        measure_results = await self._get(
+            route=f"/measures/{measure_id}/results",
+            params={
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        if measure_results:
+            return MeasureResults(
+                [MeasureResult(**measure_result) for measure_result in measure_results["data"]],
+                measure_results["count"],
+            )
+
     async def create_measure(
-            self,
-            measure: Measure,
+        self,
+        measure: Measure,
     ) -> Optional[Measure]:
         """
         Добавление мероприятия
@@ -196,12 +162,12 @@ class VirtualRoom(BaseAPI):
             return Measure(**created_measure)
 
     async def add_tutor_to_measure_by_email(
-            self,
-            measure_id: int,
-            tutor_email: str,
-            send_notifications: bool = True,
-            add_roles_by_default: bool = True,
-            enable_search_by_email: bool = True,
+        self,
+        measure_id: int,
+        tutor_email: str,
+        send_notifications: bool = True,
+        add_roles_by_default: bool = True,
+        enable_search_by_email: bool = True,
     ):
         """
         Добавление преподавателя мероприятия по E-mail
@@ -214,10 +180,7 @@ class VirtualRoom(BaseAPI):
             "addRolesByDefault": add_roles_by_default,
             "enableSearchByEmail": enable_search_by_email,
         }
-        tutor = await self._post(
-            route=f"/measures/{measure_id}/tutors/regbyemail/{tutor_email}",
-            data=data
-        )
+        tutor = await self._post(route=f"/measures/{measure_id}/tutors/regbyemail/{tutor_email}", data=data)
         return tutor
 
     async def add_tutor_to_measure_by_id(
@@ -243,9 +206,7 @@ class VirtualRoom(BaseAPI):
         :param measure_id: идентификатор мероприятия
         :return: True if success
         """
-        measure = await self._delete(
-            route=f"/measures/{measure_id}"
-        )
+        measure = await self._delete(route=f"/measures/{measure_id}")
         if measure:
             return True
         else:
@@ -260,9 +221,7 @@ class VirtualRoom(BaseAPI):
         :param measure_id: идентификатор мероприятия
         :return: Ссылка для регистрации на вебинар
         """
-        guest_link = await self._get(
-            route=f"/measures/{measure_id}/webinarAnonymousLink"
-        )
+        guest_link = await self._get(route=f"/measures/{measure_id}/webinarAnonymousLink")
         if guest_link:
             return guest_link
         else:

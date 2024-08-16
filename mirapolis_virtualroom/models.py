@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Sequence, Literal
+from typing import Literal, Optional, Sequence
 
 from pydantic import BaseModel, field_serializer
 
@@ -64,10 +64,10 @@ class Measure(BaseModel):
                 self.meenddate.strftime('%d.%m.%Y %H:%M')}\n"
         return result
 
-    @field_serializer('mestartdate', 'meenddate')
+    @field_serializer("mestartdate", "meenddate")
     def format_date(self, dt: Optional[datetime]):
         if dt:
-            return dt.strftime('%Y-%m-%d %H:%M:%S.000')
+            return dt.strftime("%Y-%m-%d %H:%M:%S.000")
 
 
 class Measures:
@@ -129,3 +129,25 @@ class Tutors:
 
     def __str__(self):
         return "\n".join([tutor.personidname for tutor in self._tutors])
+
+
+class MeasureResult(BaseModel):
+    mmid: int
+    mrstatusid: Optional[int] = None
+    mrlastaccesstime: Optional[datetime] = None
+    mrscoreinpercent: Optional[int] = None
+    mrscore: Optional[float] = None
+    mrprocent: Optional[int] = None
+    mrduration: Optional[float] = None
+    mrstarttime: Optional[datetime] = None
+    mrendtime: Optional[datetime] = None
+    mrattemptcount: Optional[int] = None
+
+
+class MeasureResults:
+    def __init__(self, measure_results: Sequence[MeasureResult], count: int):
+        self._measure_results = measure_results
+        self.count = count
+
+    def __getitem__(self, key: int) -> MeasureResult:
+        return self._measure_results[key]

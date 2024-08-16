@@ -82,6 +82,7 @@ class BaseAPI:
                             self._link}{route} {get.content_type} {answer=}"
                         )
                         if "Content-Range" in get.headers:
+                            logging.info(f"GET Content-Range: {get.headers["Content-Range"]}")
                             count = int(get.headers["Content-Range"].split("/")[-1])
                             return {"data": answer, "count": count}
                         else:
