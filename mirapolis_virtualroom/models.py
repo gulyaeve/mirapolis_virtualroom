@@ -166,3 +166,27 @@ class MeasureResults:
 
     def model_dump(self):
         return [model.model_dump() for model in self._measure_results]
+
+
+class WebinarRecord(BaseModel):
+    id: str
+    name: str
+    period: Optional[str] = None
+    duration: Optional[str] = None
+    viewlink: str
+    downloadlink: Optional[str] = None
+
+    def __str__(self) -> str:
+        return self.viewlink
+
+
+class WebinarRecords:
+    def __init__(self, webinar_records: Sequence[WebinarRecord], count: int):
+        self._webinar_records = webinar_records
+        self.count = count
+
+    def __getitem__(self, key: int) -> WebinarRecord:
+        return self._webinar_records[key]
+
+    def model_dump(self):
+        return [model.model_dump() for model in self._webinar_records]

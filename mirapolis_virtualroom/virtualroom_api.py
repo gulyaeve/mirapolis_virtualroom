@@ -1,7 +1,20 @@
 from typing import Optional
 
 from .base_api import BaseAPI
-from .models import Measure, MeasureResult, MeasureResults, Measures, Member, Members, Person, Persons, Tutor, Tutors
+from .models import (
+    Measure,
+    MeasureResult,
+    MeasureResults,
+    Measures,
+    Member,
+    Members,
+    Person,
+    Persons,
+    Tutor,
+    Tutors,
+    WebinarRecord,
+    WebinarRecords,
+)
 
 
 class VirtualRoom(BaseAPI):
@@ -224,5 +237,24 @@ class VirtualRoom(BaseAPI):
         guest_link = await self._get(route=f"/measures/{measure_id}/webinarAnonymousLink")
         if guest_link:
             return guest_link
+        else:
+            return None
+
+    async def get_webinar_records(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[WebinarRecords]:
+        """
+        Получение ссылок на записи вебинара
+        """
+        webinar_records = await self._get(
+            route=f"/measures/{measure_id}/webinarRecords",
+            params={
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        if webinar_records:
+            return WebinarRecords(
+                [WebinarRecord(**webinar_record) for webinar_record in webinar_records["data"]],
+                webinar_records["count"],
+            )
         else:
             return None
