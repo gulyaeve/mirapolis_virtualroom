@@ -110,7 +110,10 @@ class Members:
         return self._members[key]
 
     def __str__(self):
-        return "\n".join([member.personidname for member in self._members])
+        if self._members:
+            return "\n".join([member.personidname for member in self._members])
+        else:
+            return "Нет участников"
     
     def model_dump(self):
         return [model.model_dump() for model in self._members]
@@ -137,7 +140,10 @@ class Tutors:
         return self._tutors[key]
 
     def __str__(self):
-        return "\n".join([tutor.personidname for tutor in self._tutors])
+        if self._tutors:
+            return "\n".join([tutor.personidname for tutor in self._tutors])
+        else:
+            return "Нет преподавателей"
     
     def model_dump(self):
         return [model.model_dump() for model in self._tutors]
