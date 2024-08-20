@@ -48,10 +48,10 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             },
         )
-        if persons:
+        if isinstance(persons, dict):
             return Persons([Person(**person) for person in persons["data"]], persons["count"])
-        else:
-            return None
+        if isinstance(persons, list):
+            return Persons([Person(**person) for person in persons], len(persons))
 
     async def get_person(self, person_id: int) -> Optional[Person]:
         """
@@ -61,10 +61,8 @@ class VirtualRoom(BaseAPI):
         :return: Person
         """
         person = await self._get(route=f"/persons/{person_id}")
-        if person:
+        if isinstance(person, dict):
             return Person(**person)
-        else:
-            return None
 
     async def get_measures(self, limit: int = 200, offset: int = 0) -> Optional[Measures]:
         """
@@ -80,10 +78,10 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             },
         )
-        if measures:
+        if isinstance(measures, dict):
             return Measures([Measure(**measure) for measure in measures["data"]], measures["count"])
-        else:
-            return None
+        if isinstance(measures, list):
+            return Measures([Measure(**measure) for measure in measures], len(measures))
 
     async def get_measure(self, measure_id: int) -> Optional[Measure]:
         """
@@ -93,10 +91,8 @@ class VirtualRoom(BaseAPI):
         :return: Measure
         """
         measure = await self._get(route=f"/measures/{measure_id}")
-        if measure:
+        if isinstance(measure, dict):
             return Measure(**measure)
-        else:
-            return None
 
     async def get_members(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[Members]:
         """
@@ -113,10 +109,10 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             },
         )
-        if members:
+        if isinstance(members, dict):
             return Members([Member(**member) for member in members["data"]], members["count"])
-        else:
-            return None
+        if isinstance(members, list):
+            return Members([Member(**member) for member in members], len(members))
 
     async def get_tutors(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[Tutors]:
         """
@@ -137,14 +133,19 @@ class VirtualRoom(BaseAPI):
             return Tutors([Tutor(**tutor) for tutor in tutors["data"]], tutors["count"])
         if isinstance(tutors, list):
             return Tutors([Tutor(**tutor) for tutor in tutors], len(tutors))
-        else:
-            return None
 
     async def get_measures_info(self):
         measures_info = await self._get(route="/measures/info")
         return measures_info
 
     async def get_measure_results(self, measure_id: int, limit: int = 200, offset: int = 0):
+        """
+        Получение результатов мероприятия
+        :param measure_id: идентификатор мероприятия
+        :param limit: Количество записей (200 максимально)
+        :param offset: Сдвиг страницы
+        :return: Sequence of measure results
+        """
         measure_results = await self._get(
             route=f"/measures/{measure_id}/results",
             params={
@@ -152,10 +153,15 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             },
         )
-        if measure_results:
+        if isinstance(measure_results, dict):
             return MeasureResults(
                 [MeasureResult(**measure_result) for measure_result in measure_results["data"]],
                 measure_results["count"],
+            )
+        if isinstance(measure_results, list):
+            return MeasureResults(
+                [MeasureResult(**measure_result) for measure_result in measure_results],
+                len(measure_results),
             )
 
     async def create_measure(
@@ -171,7 +177,7 @@ class VirtualRoom(BaseAPI):
             route="/measures",
             data=measure.model_dump(exclude_none=True),
         )
-        if created_measure:
+        if isinstance(created_measure, dict):
             return Measure(**created_measure)
 
     async def add_tutor_to_measure_by_email(
@@ -210,7 +216,7 @@ class VirtualRoom(BaseAPI):
         tutor = await self._post(
             route=f"/measures/{measure_id}/tutors/{person_id}",
         )
-        if tutor:
+        if isinstance(tutor, dict):
             return Tutor(**tutor)
 
     async def delete_measure(self, measure_id: int) -> Optional[bool]:
@@ -220,10 +226,7 @@ class VirtualRoom(BaseAPI):
         :return: True if success
         """
         measure = await self._delete(route=f"/measures/{measure_id}")
-        if measure:
-            return True
-        else:
-            return False
+        return True if measure else False
 
     async def get_measure_guest_link(
         self,
@@ -235,10 +238,8 @@ class VirtualRoom(BaseAPI):
         :return: Ссылка для регистрации на вебинар
         """
         guest_link = await self._get(route=f"/measures/{measure_id}/webinarAnonymousLink")
-        if guest_link:
+        if isinstance(guest_link, str):
             return guest_link
-        else:
-            return None
 
     async def get_webinar_records(self, measure_id: int, limit: int = 200, offset: int = 0) -> Optional[WebinarRecords]:
         """
@@ -251,10 +252,13 @@ class VirtualRoom(BaseAPI):
                 "offset": offset,
             },
         )
-        if webinar_records:
+        if isinstance(webinar_records, dict):
             return WebinarRecords(
                 [WebinarRecord(**webinar_record) for webinar_record in webinar_records["data"]],
                 webinar_records["count"],
             )
-        else:
-            return None
+        if isinstance(webinar_records, list):
+            return WebinarRecords(
+                [WebinarRecord(**webinar_record) for webinar_record in webinar_records],
+                len(webinar_records),
+            )

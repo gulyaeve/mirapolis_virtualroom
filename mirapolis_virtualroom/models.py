@@ -35,7 +35,7 @@ class Persons:
 
     def __str__(self) -> str:
         return "\n".join([str(person) for person in self._persons])
-    
+
     def model_dump(self):
         return [model.model_dump() for model in self._persons]
 
@@ -75,7 +75,8 @@ class Measure(BaseModel):
 
 class Measures:
     def __init__(self, measures: Sequence[Measure], count: int):
-        self._measures = sorted(measures, key=lambda x: x.meid, reverse=True)
+        # self._measures = sorted(measures, key=lambda x: x.meid, reverse=True)
+        self._measures = measures
         self.count = count
 
     def __getitem__(self, key: int) -> Measure:
@@ -83,7 +84,7 @@ class Measures:
 
     def __str__(self):
         return "\n".join([str(measure) for measure in self._measures])
-    
+
     def model_dump(self):
         return [model.model_dump() for model in self._measures]
 
@@ -114,7 +115,7 @@ class Members:
             return "\n".join([member.personidname for member in self._members])
         else:
             return "Нет участников"
-    
+
     def model_dump(self):
         return [model.model_dump() for model in self._members]
 
@@ -144,7 +145,7 @@ class Tutors:
             return "\n".join([tutor.personidname for tutor in self._tutors])
         else:
             return "Нет преподавателей"
-    
+
     def model_dump(self):
         return [model.model_dump() for model in self._tutors]
 
